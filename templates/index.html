@@ -16,7 +16,7 @@
 	<!-- js -->
 	<script type="text/javascript" src="/static/js/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="/static/js/fusioncharts/fusioncharts.js"></script>
-	    <script type="text/javascript" src="/static/js/fusioncharts.theme.fint.js" ></script>
+	<script type="text/javascript" src="/static/js/fusioncharts.theme.fint.js" ></script>
 	<!-- //js -->
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -54,15 +54,12 @@
 								<nav class="cl-effect-1">
 									<ul class="nav navbar-nav ">
 										<li><a class="hvr-overline-from-center active" href="{% url 'home_url' %}">Home</a></li>
-										<li><a class="hvr-overline-from-center" href="{% url 'about_us_url' %}">About</a></li>
-										<li><a class="hvr-overline-from-center" href="{% url 'agropredict_url' %}">Agro Predict</a></li>
-										<li><a class="hvr-overline-from-center" href="{%  url 'contact_url' %}">Contact</a></li>
 										 {% if not user.is_authenticated %}
 										<li><a class="hvr-overline-from-center" href="{%  url 'login_url' %}">Login</a></li>
 										<li><a class="hvr-overline-from-center" href="{%  url 'signup_url' %}">Signup</a></li>
 
 										{% else %}
-										<li><a class="hvr-overline-from-center" href="#">{{ user.first_name }}</a></li>
+										<li><a class="hvr-overline-from-center" href="#">{{ user.username }}</a></li>
 										<li><a class="hvr-overline-from-center" href="{%  url 'logout_url' %}">LogOut</a></li>
 
 										{% endif %}

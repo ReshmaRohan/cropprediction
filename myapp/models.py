@@ -6,11 +6,12 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
 	username=models.ForeignKey(User,on_delete=models.CASCADE)
 	email=models.CharField(max_length=30)
-	phone_no=models.CharField(max_length=20)
+	phone=models.CharField(max_length=20)
 	
 
 	def _str_(self):
 		return self.user.username
+		
 class Agromain(models.Model):
 	data_file=models.CharField(max_length=100)
 	active=models.IntegerField()
