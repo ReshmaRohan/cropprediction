@@ -31,11 +31,11 @@ def signup(request):
 		name=request.POST.get('name')
 		phone=request.POST.get('phone')
 		email=request.POST.get('email')
-		password_=request.POST.get('pass1')
+		password=request.POST.get('pass1')
 		user=User.objects.create_user(
 			username=phone,
 			email=email,
-			password=password_,
+			password=password,
 			)
 			
 		userpro=UserProfile(
