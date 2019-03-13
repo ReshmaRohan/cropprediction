@@ -14,7 +14,7 @@ class UserProfile(models.Model):
 		
 class Agromain(models.Model):
 	data_file=models.CharField(max_length=100)
-	active=models.IntegerField()
+	active=models.BooleanField(default=True)
 
 	def _str_(self):
 		return self.active
