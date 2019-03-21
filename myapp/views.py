@@ -5,6 +5,10 @@ from django.contrib.auth.models import User
 from .models import UserProfile,Agromain,Agridata
 from django.core.urlresolvers import reverse
 import pandas as pd
+from django.db.models import Avg
+from graphos.sources.simple import SimpleDataSource
+from graphos.renderers.highcharts import LineChart,BarChart,ScatterChart,ColumnChart
+from mysite.settings import BASE_DIR
 
 def log_in(request):
 	if request.method == 'POST':
@@ -77,35 +81,35 @@ def home(request):
 		if "file1" in request.FILES:
 			file1 = request.FILES['file1']
 			analysis = Agromain(data_file=file1)
-			analysis.save()
-			# ernakulam = create_js_chart()
-			# alappuzha = create_js_chart('ALAPPUZHA','highchartala_div','ALAPPUZHA')
-			# idukki = create_js_chart('IDUKKI','highchartidukki_div','IDUKKI')
-			# kannur = create_js_chart('KANNUR','highchartkannur_div','KANNUR')
-			# kasaragod = create_js_chart('KASARAGOD','highchartkasaragod_div','KASARAGOD')
-			# kollam = create_js_chart('KOLLAM','highchartkollam_div','KOLLAM')
-			# kottayam = create_js_chart('KOTTAYAM','highchartkottayam_div','KOTTAYAM')
-			# kozhikode = create_js_chart('KOZHIKODE','highchartkozhikode_div','KOZHIKODE')
-			# malappuram = create_js_chart('MALAPPURAM','highchartmala_div','MALAPPURAM')
-			# palakad = create_js_chart('PALAKKAD','highchartpala_div','PALAKKAD')
-			# pathanamthitta = create_js_chart('PATHANAMTHITTA','highchartpathanam_div','PATHANAMTHITTA')
-			# tvm = create_js_chart('THIRUVANANTHAPURAM','highcharttvn_div','THIRUVANANTHAPURAM')
-			# tsr = create_js_chart('THRISSUR','highcharttsr_div','THRISSUR')
-			# wayanad = create_js_chart('WAYANAD','highchartwayanad_div','WAYANAD')
-			data = pd.read_csv(file1)
+# 			analysis.save()
+			 ernakulam = create_js_chart()
+			 alappuzha = create_js_chart('ALAPPUZHA','highchartala_div','ALAPPUZHA')
+			 idukki = create_js_chart('IDUKKI','highchartidukki_div','IDUKKI')
+			 kannur = create_js_chart('KANNUR','highchartkannur_div','KANNUR')
+			 kasaragod = create_js_chart('KASARAGOD','highchartkasaragod_div','KASARAGOD')
+			 kollam = create_js_chart('KOLLAM','highchartkollam_div','KOLLAM')
+			 kottayam = create_js_chart('KOTTAYAM','highchartkottayam_div','KOTTAYAM')
+			 kozhikode = create_js_chart('KOZHIKODE','highchartkozhikode_div','KOZHIKODE')
+			 malappuram = create_js_chart('MALAPPURAM','highchartmala_div','MALAPPURAM')
+			 palakad = create_js_chart('PALAKKAD','highchartpala_div','PALAKKAD')
+			 pathanamthitta = create_js_chart('PATHANAMTHITTA','highchartpathanam_div','PATHANAMTHITTA')
+			 tvm = create_js_chart('THIRUVANANTHAPURAM','highcharttvn_div','THIRUVANANTHAPURAM')
+			 tsr = create_js_chart('THRISSUR','highcharttsr_div','THRISSUR')
+			 wayanad = create_js_chart('WAYANAD','highchartwayanad_div','WAYANAD')
+# 			# data = pd.read_csv(file1)
 			# Agridata.objects.all().delete()
-			state =[i for i in data['state_name']]
-			district_name = [i for i in data['district_name']]
-			crop_year = [i for i in data['crop_year']]
-			season = [i for i in data['season']]
-			crop = [i for i in data['crop']]
-			area = [i for i in data['area']]
-			production = [i for i in data['production']]
-			rainfall = [i for i in data['rainfall']]
-			for i in range(len(state)):
-				agri = Agridata(state_name=state[i],district_name=district_name[i],crop_year=crop_year[i],
-					season=season[i],crop=crop[i],area=area[i],production=production[i],rainfall=rainfall[i])
-				agri.save()
+# 			state =[i for i in data['state_name']]
+# 			district_name = [i for i in data['district_name']]
+# 			crop_year = [i for i in data['crop_year']]
+# 			season = [i for i in data['season']]
+# 			crop = [i for i in data['crop']]
+# 			area = [i for i in data['area']]
+# 			production = [i for i in data['production']]
+# 			rainfall = [i for i in data['rainfall']]
+# 			for i in range(len(state)):
+# 				agri = Agridata(state_name=state[i],district_name=district_name[i],crop_year=crop_year[i],
+# 					season=season[i],crop=crop[i],area=area[i],production=production[i],rainfall=rainfall[i])
+# 				agri.save()
 			msg = "ok"
 
 			return render(request, 'home.html', {'msg':msg,'wayanad':wayanad,'tsr':tsr,
@@ -130,7 +134,7 @@ def About(request):
 
 
 def Cluster(request):
-	data = AnalysisFiles.objects.get(active=True)
+	data = Agromain.objects.filter(active=True)
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
 	df = pd.read_csv(filename)
 	print(type(df))
