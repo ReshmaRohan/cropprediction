@@ -5,29 +5,28 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
 	username=models.ForeignKey(User,on_delete=models.CASCADE)
-	email=models.CharField(max_length=30)
+	email=models.EmailField(max_length=30)
 	phone=models.CharField(max_length=20)
 	
 
-	def _str_(self):
-		return self.user.username
+	def __str__(self):
+		return self.username.username
 		
 class Agromain(models.Model):
-	data_file=models.CharField(max_length=100)
+	data_file = models.FileField(upload_to='data/', null=True, blank=True)
 	active=models.BooleanField(default=True)
 
-	def _str_(self):
-		return self.active
+	def __str__(self):
+		return self.data_file
 
 class Agridata(models.Model):
-	state_name=models.CharField(max_length=50)
-	district_name=models.CharField(max_length=50)	
-	crop_year=models.IntegerField()
-	season=models.CharField(max_length=50)
-	crop=models.CharField(max_length=50)
-	area=models.DecimalField(max_digits=10,decimal_places=4,default=Decimal('0.0000'))
-	production=models.DecimalField(max_digits=10,decimal_places=4,default=Decimal('0.0000'))
-	rainfall=models.IntegerField()
-	
-	def _str_(self):
-		return self.state_name,self.production
+	state_name = models.CharField(max_length=50)
+	district_name = models.CharField(max_length=50)
+	crop_year = models.IntegerField(default=2002)
+	season = models.CharField(max_length=50)
+	crop = models.CharField(max_length=50)
+	area = models.DecimalField(default=0.0,decimal_places=2,max_digits=10)
+	production = models.DecimalField(default=0.0,decimal_places=2,max_digits=10)
+	rainfall = models.IntegerField(default=0)
+	def __str__(self):
+		return self.state_name+'-'+self.district_name
