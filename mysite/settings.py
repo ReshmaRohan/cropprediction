@@ -15,7 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myapp'
+    'myapp',
+    'graphos',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -79,9 +80,13 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'agripredict',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    },
 }
 
 
@@ -116,11 +121,13 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-# SUPER_DIR = os.path.abspath(os.path.join(PROJECT_DIR,os.path.pardir))
+SUPER_DIR = os.path.abspath(os.path.join(PROJECT_DIR,os.path.pardir))
 
 STATICFILES_DIR = (os.path.join(BASE_DIR,"static"),)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_URL = '/static/'
+MEDIA_URL = '/media'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
