@@ -134,7 +134,7 @@ def About(request):
 
 
 def Cluster(request):
-	data = Agromain.objects.filter(active=True)
+	data = Agromain.objects.filter(active=True)[0]
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
 	df = pd.read_csv(filename)
 	print(type(df))
