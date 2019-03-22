@@ -9,6 +9,12 @@ from django.db.models import Avg
 from graphos.sources.simple import SimpleDataSource
 from graphos.renderers.highcharts import LineChart,BarChart,ScatterChart,ColumnChart
 from mysite.settings import BASE_DIR
+from sklearn.cluster import MeanShift,estimate_bandwidth
+from sklearn import linear_model
+from sklearn.cluster import KMeans
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 def log_in(request):
 	if request.method == 'POST':
@@ -79,6 +85,8 @@ def create_js_chart(name='ERNAKULAM',html_id='highchart_div',title = 'ERNAKULAM'
 def home(request):
 	if request.method == 'POST':
 		if "file1" in request.FILES:
+			print(request.user)
+			if request.user.is_authenticated:
 			file1 = request.FILES['file1']
 			analysis = Agromain(data_file=file1)
 # 			analysis.save()
