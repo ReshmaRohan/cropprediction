@@ -44,7 +44,7 @@
 
 			 		{% else %}
 			 			<h3 style="text-align: center; color: green; margin-bottom: 5px;">Add Credential Information To predict production</h3>
-			 		<form action="{% url 'agropredict_url' %}" method="post" name="form1">
+			 		<form action="{% url 'predict_url' %}" method="post" name="form1">
 			 		{% csrf_token %}
 					<div class="form-group">
 
@@ -84,9 +84,12 @@
 					      </select>
 					      <br>
 
-
-					     <label for="Area">Enter Area (mm)</label>
+                         
+					    <label for="Area">Enter Area (mm)</label>
 			 			<input type="numbers" class="form-control" placeholder="Enter Area " name="area" style="margin-top: 5px;"><br>
+			 			<label> for="crop">Enter Crop </label>
+			 			<input type="text" class="form-control" placeholder="Enter crop " name="crop"
+			 			style="margin-top: 5px;"><br>
 			 			<label for="rainfall">Enter Rainfall (mm)</label>
 			 			<input type="numbers" class="form-control" placeholder="Enter Rainfall (mm)" name="rainfall" style="margin-top: 5px;"><br>
 			 			<input type="submit" name="sbt1" value="Predict" class="btn btn-info" style="margin-top: 10px;">
