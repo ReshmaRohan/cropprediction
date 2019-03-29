@@ -34,6 +34,7 @@ class Agridata(models.Model):
 	
 	def __str__(self):
 		return self.state_name+'-'+self.district_name
+<<<<<<< HEAD
 
 class Contact(models.Model):
 	name=models.CharField(max_length=30)
@@ -45,3 +46,12 @@ class Contact(models.Model):
 	def __str__(self):
 		return str(self.name)
 
+=======
+class Contact(models.Model):
+	name=models.CharField(max_length=30)
+	email = models.EmailField(max_length=30)
+	message = models.CharField(max_length=80)
+
+	def __str__(self):
+		return str(self.name)
+>>>>>>> origin/master
