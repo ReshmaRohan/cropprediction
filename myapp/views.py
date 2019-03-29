@@ -152,6 +152,18 @@ def About(request):
 	return render(request, 'about.html', {})
 
 
+def contact(request):
+    if request.method == 'POST':
+        name=request.POST.get('name')
+        email=request.POST.get('email')
+        message=request.POST.get('message')
+        s=Contact(name=name,email=email,message=message)
+        s.save()
+        return render(request,'contact.html',{'message':"hloo"})
+
+    else:
+        return render(request,'contact.html',{})    
+
 def Cluster(request):
 	data = Agromain.objects.filter(active=True)[0]
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
