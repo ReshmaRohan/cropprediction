@@ -37,8 +37,10 @@ class Agridata(models.Model):
 
 class Contact(models.Model):
 	name=models.CharField(max_length=30)
-	email = models.EmailField(max_length=30)
-	message = models.CharField(max_length=80)
+	# name=models.ForeignKey(User,on_delete=models.CASCADE)
+	email=models.EmailField(max_length=30)
+	message=models.CharField(max_length=80)
+	
 
 	def __str__(self):
 		return str(self.name)
