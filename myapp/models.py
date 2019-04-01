@@ -11,7 +11,6 @@ class UserProfile(models.Model):
 
 	def __str__(self):
 		return self.username.username
-		
 class Agromain(models.Model):
 	data_file = models.FileField(upload_to='data/', null=True, blank=True)
 	active=models.BooleanField(default=True)
@@ -19,7 +18,18 @@ class Agromain(models.Model):
 	# def __str__(self):
 	#   return self.data_file
 
-	def __str__(self):
+	def _set_inactive():
+		dataset=Agromain.Objects.All()
+		if dataset:
+			for data in dataset:
+				data.active=False
+				data.save()
+	def save(self,*args,**kwargs):
+		if self.pk is none:
+			self._set_inactive()
+		super(Agromain,self).save(*args,**kwargs)			
+
+
 	   return str(self.data_file)
 
 class Agridata(models.Model):
@@ -34,7 +44,7 @@ class Agridata(models.Model):
 	
 	def __str__(self):
 		return self.state_name+'-'+self.district_name
-<<<<<<< HEAD
+
 
 class Contact(models.Model):
 	name=models.CharField(max_length=30)
@@ -46,12 +56,4 @@ class Contact(models.Model):
 	def __str__(self):
 		return str(self.name)
 
-=======
-class Contact(models.Model):
-	name=models.CharField(max_length=30)
-	email = models.EmailField(max_length=30)
-	message = models.CharField(max_length=80)
 
-	def __str__(self):
-		return str(self.name)
->>>>>>> origin/master
