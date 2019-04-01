@@ -148,27 +148,11 @@ def home(request):
 
 def About(request):
 	ernakulam = create_chart()
-
 	return render(request, 'about.html', {})
 
-
-<<<<<<< HEAD
-def cluster(request):
-=======
-def contact(request):
-    if request.method == 'POST':
-        name=request.POST.get('name')
-        email=request.POST.get('email')
-        message=request.POST.get('message')
-        s=Contact(name=name,email=email,message=message)
-        s.save()
-        return render(request,'contact.html',{'message':"hloo"})
-
-    else:
-        return render(request,'contact.html',{})    
+ 
 
 def Cluster(request):
->>>>>>> origin/master
 	data = Agromain.objects.filter(active=True)[0]
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
 	df = pd.read_csv(filename)
@@ -231,30 +215,34 @@ def Cluster(request):
 
 def About(request):
 	return render(request,'about.html',{})
+   
 def contact(request):
-	if request.method == 'POST':
-		name=request.POST.get('Name')
-		email=request.POST.get('Email')
-		message=request.POST.get('Content')
-		print name,email,message
-		s=Contact(name=name,email=email,message=message)
-		s.save()
-		return render(request,'home.html',{})
+    if request.method == 'POST':
+        name=request.POST.get('name')
+        email=request.POST.get('email')
+        message=request.POST.get('message')
+        s=Contact(name=name,email=email,message=message)
+        s.save()
+        return render(request,'home.html',{})
 
-	else:
-		return render(request,'contact.html',{})    
-
-
+    else:
+        return render(request,'contact.html',{})   
 
 
 def prediction(request):
 	if request.method == 'POST':
-		Area=request.POST.get('area')
-		Crop=request.POST.get('crop')
-		Rainfall=request.POST.get('rainfall')
-		# production=request.POST.get('production')
-		return render(request,'predict.html',{})
+		area=request.POST.get('area')
+		year=request.POST.get('year')
+		crop=request.POST.get('crop')
+		rainfall=request.POST.get('rainfall')
+		print("inserted",area,year,crop,rainfall)
+		result=("show",rainfall)
+		result=float(rainfall)
+		return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall,'crop':crop})
 	else:
-		return render(request,'home.html',{})
+		return render(request,'predict.html',{})
 
+def show(rainfall):
 	
+     
+	return render(request,'predict.html')
