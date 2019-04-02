@@ -1,11 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render,render_to_response
 from django.contrib.auth import login, authenticate,logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse,HttpResponseNotFound,JsonResponse
 from django.contrib.auth.models import User
 from .models import UserProfile,Agromain,Agridata,Contact
 from django.core.urlresolvers import reverse
 import pandas as pd
-from django.db.models import Avg
+from django.core.mail import send_mail
+import random
+import datetime
+import time
+from fusioncharts import fusioncharts
+import django
+import matplotlib
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib.dates import DateFormatter
+from matplotlib import pylab
+from pylab import *
+import PIL,PIL.Image,StringIO
+from django.db.models import Avg,Sum
+from myapp.settings import BASE_DIR
 from graphos.sources.simple import SimpleDataSource
 from graphos.renderers.highcharts import LineChart,BarChart,ScatterChart,ColumnChart
 from mysite.settings import BASE_DIR
@@ -235,6 +249,7 @@ def prediction(request):
 		year=request.POST.get('year')
 		crop=request.POST.get('crop')
 		rainfall=request.POST.get('rainfall')
+		# production=request.POST.get('production')
 		print("inserted",area,year,crop,rainfall)
 		result=("show",rainfall)
 		result=float(rainfall)
@@ -243,6 +258,32 @@ def prediction(request):
 		return render(request,'predict.html',{})
 
 def show(rainfall):
-	
-     
-	return render(request,'predict.html')
+	data = Agromain.objects.get(active=True)
+	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
+	df = pd.read_csv(filename)
+	DISTRICTS=df['district_name'].unique()
+	rain=int(rainfall)
+	X='rainfall'
+	Y='production'
+	df2=[[x,y]]
+	df2.columns=np.array([X,Y])
+	x_mean=df2[X].mean()
+	y_mean=df2[Y].mean()
+	df2=df2.copy()
+	df2.fillna({X:x_mean,Y:y_mean}, inplace=True)
+	print("DF2",df2)
+	reg=linear_model.LinearRegression()
+	print "Rain",rain
+	df_test=[[rain]]
+	print "Test",df_test
+	model=reg.fit(df2[X].values.reshape(-1,1),df2[Y].values.reshape(-1,1))
+	print("reg",reg)
+	print("coef",reg.coef_)
+	predicted_values=reg.predict(df_test)
+	print("pere",predicted_values)
+	print(df_test)
+	print("\n")
+	print("predicted_values")
+	for rainfall,predicted_production in zip(df_test,predicted_values):
+		print("RainFall :{}mm | Production : {.2f}".format(rainfall[0],float(predicted_production[0])))
+	return(predicted_values)
