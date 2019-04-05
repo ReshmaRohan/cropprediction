@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 import random
 import datetime
 import time
-from fusioncharts import fusioncharts
+from fusioncharts import FusionCharts
 import django
 import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -19,7 +19,6 @@ from matplotlib import pylab
 from pylab import *
 import PIL,PIL.Image,StringIO
 from django.db.models import Avg,Sum
-from myapp.settings import BASE_DIR
 from graphos.sources.simple import SimpleDataSource
 from graphos.renderers.highcharts import LineChart,BarChart,ScatterChart,ColumnChart
 from mysite.settings import BASE_DIR
@@ -28,10 +27,7 @@ from sklearn import linear_model
 from sklearn.cluster import KMeans
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-
-
+from django.http import HttpResponse
 
 
 def log_in(request):
@@ -79,28 +75,12 @@ def signup(request):
 
 def home(request):
 	return render(request,'home.html',{})
-def log_out(request):
-	logout(request)
+
 	return render(request,'home.html',{})   
-def create_js_chart(name='ERNAKULAM',html_id='highchart_div',title = 'ERNAKULAM'):
-	district = Agridata.objects.filter(district_name__icontains=name)
-	years = [int(value[0]) for value in district.values_list('crop_year').distinct()]
-	averages = [
-		(Agridata.objects.filter(district_name=name, crop_year=year).aggregate(
-			Avg('production'))).get('production__avg') for year in years
-	]
-	data = [
-		['Years', 'Production (Avg)'],
-	]
-	for year, avg in zip(years, averages):
-		data.append([year, avg])
-	
-	sd = SimpleDataSource(data)
-	hc = LineChart(
-		sd, html_id, height=450, width=450,
-		options={'title': title, 'xAxis': {'title': {'text':'years'}}, 'style': 'float:right;'}
-	)
-	return hc
+
+
+
+
 def home(request):
 	if request.method == 'POST':
 		if "file1" in request.FILES:
@@ -159,14 +139,105 @@ def home(request):
 		ernakulam = create_js_chart()
 		return render(request, 'home.html', {})
 
+def create_js_chart(name='ERNAKULAM',html_id='highchart_div',title = 'ERNAKULAM'):
+	district = Agridata.objects.filter(district_name__icontains=name)
+	years = [int(value[0]) for value in district.values_list('crop_year').distinct()]
+	averages = [
+		(Agridata.objects.filter(district_name=name, crop_year=year).aggregate(
+			Avg('production'))).get('production__avg') for year in years
+	]
+	data = [
+		['Years', 'Production (Avg)'],
+	]
+	for year, avg in zip(years, averages):
+		data.append([year, avg])
+	
+	sd = SimpleDataSource(data)
+	hc = LineChart(
+		sd, html_id, height=450, width=450,
+		options={'title': title, 'xAxis': {'title': {'text':'years'}}, 'style': 'float:right;'}
+	)
+	return hc
+
+def create_chart(name='ERNAKULAM',html_id='highchart_div',title='ERNAKULAM'):
+	agri=Agromain.objects.all()
+	raindata=[i.rainfall for i in agri]
+	X=np.array(zip(raindata,range(len(raindata))), dtype=np.int)
+	bandwidth=estimate_bandwidth(X, quantile=0.1)
+	ms= MeanShift(bandwidth=bandwidth,bin_seeding=True)
+	ms.fit(X)
+	labels=ms.labels
+	cluster_centers=ms.cluster_centers
+	labels.unique=np.unique(labels)
+	n_clusters_=len(labels_unique)
+	for k in range(n_clusters_):
+		my_members=labels == k
+	colors = 10*['r.','g.','b.','c.','k.','y.','m.']
+	r,g,b,c,k,y,m=[],[],[],[],[],[],[]
+	r=[['years','production (avg)'],]
+	g=[['years','production (avg)'],]
+	b=[['years','production (avg)'],]
+	c=[['years','production (avg)'],]
+	k=[['years','production (avg)'],]
+	y=[['years','production (avg)'],]
+	m=[['years','production (avg)'],]
+	f=[]
+	
+	for i in range(len(X)):
+		if colors[labels[i]] == 'r.':
+			r.append([X[i][0],X[i][1]])
+		elif colors[labels[i]] == 'g.':
+			g.append([X[i][0],X[i][1]])
+		elif colors[labels[i]] == 'b.':
+			b.append([X[i][0],X[i][1]])
+		elif colors[labels[i]] == 'c.':
+			c.append([X[i][0],X[i][1]])
+		elif colors[labels[i]] == 'k.':
+			k.append([X[i][0],X[i][1]])
+		elif colors[labels[i]] == 'y.':
+			y.append([X[i][0],X[i][1]])
+		else:
+			m.append([X[i][0],X[i][1]])
+
+	f.append(r)
+	f.append(g)
+	print "fffff",f
+	f.append(b)
+	f.append(c)
+	f.append(k)
+	f.append(y)
+	f.append(m)
+
+		# plt.plot(X[i][0], X[i][1], colors[labels[i]], markersize = 10)
+	data = [
+			['Years', 'Production (Avg)'],
+	]
+	f=SimpleDataSource(f)
+	hc = ScatterChart(f,html_id,height=450,width=450,
+	options={'title': title, 'xAxis': {'title': {'text':'years'}}, 'style': 'float:right;'}
+	)
+	return hc
+
+def contact(request):
+	if request.method == 'POST':
+		name=request.POST.get('Name')
+		email=request.POST.get('Email')
+		message=request.POST.get('Content')
+		print name,email,message
+		s=Contact(name=name,email=email,message=message)
+		s.save()
+		return render(request,'home.html',{})
+
+	else:
+		return render(request,'contact.html',{})    
 
 def About(request):
 	ernakulam = create_chart()
+
 	return render(request, 'about.html', {})
 
- 
 
-def Cluster(request):
+def cluster(request):
 	data = Agromain.objects.filter(active=True)[0]
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
 	df = pd.read_csv(filename)
@@ -227,20 +298,8 @@ def Cluster(request):
 
 	return render(request,'cluster.html',{'vals':vals,'r':r,'g':g,'b':b,'c':c,'k':k,'y':y,'m':m})  
 
-def About(request):
-	return render(request,'about.html',{})
-   
-def contact(request):
-    if request.method == 'POST':
-        name=request.POST.get('name')
-        email=request.POST.get('email')
-        message=request.POST.get('message')
-        s=Contact(name=name,email=email,message=message)
-        s.save()
-        return render(request,'home.html',{})
 
-    else:
-        return render(request,'contact.html',{})   
+
 
 
 def prediction(request):
@@ -251,21 +310,26 @@ def prediction(request):
 		rainfall=request.POST.get('rainfall')
 		# production=request.POST.get('production')
 		print("inserted",area,year,crop,rainfall)
-		result=("show",rainfall)
+		result=show(rainfall)
 		result=float(rainfall)
 		return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall,'crop':crop})
 	else:
 		return render(request,'predict.html',{})
 
 def show(rainfall):
-	data = Agromain.objects.get(active=True)
+	data = Agromain.objects.filter(active=True)[0]
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
 	df = pd.read_csv(filename)
 	DISTRICTS=df['district_name'].unique()
 	rain=int(rainfall)
+	print rain
+	
+
 	X='rainfall'
 	Y='production'
-	df2=[[x,y]]
+	
+
+	df2=df[[X,Y]]
 	df2.columns=np.array([X,Y])
 	x_mean=df2[X].mean()
 	y_mean=df2[Y].mean()
@@ -285,5 +349,8 @@ def show(rainfall):
 	print("\n")
 	print("predicted_values")
 	for rainfall,predicted_production in zip(df_test,predicted_values):
-		print("RainFall :{}mm | Production : {.2f}".format(rainfall[0],float(predicted_production[0])))
+		print("RainFall :{}mm | Production : {:.2f}".format(rainfall[0],float(predicted_production[0])))
 	return(predicted_values)
+
+def log_out(request):
+	logout(request)
