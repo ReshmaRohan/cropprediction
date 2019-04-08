@@ -30,6 +30,10 @@ import matplotlib.pyplot as plt
 from django.http import HttpResponse
 
 
+
+
+
+
 def log_in(request):
 	if request.method == 'POST':
 		phone=request.POST.get('phone')
@@ -77,68 +81,6 @@ def home(request):
 	return render(request,'home.html',{})
 
 	return render(request,'home.html',{})   
-
-
-
-
-def home(request):
-	if request.method == 'POST':
-		if "file1" in request.FILES:
-			print(request.user)
-			if request.user.is_authenticated:
-				file1 = request.FILES['file1']
-				print(file1)
-				analysis = Agromain(data_file=file1)
-				print (analysis)
-				analysis.save()
-				ernakulam = create_js_chart()
-				alappuzha = create_js_chart('ALAPPUZHA','highchartala_div','ALAPPUZHA')
-				idukki = create_js_chart('IDUKKI','highchartidukki_div','IDUKKI')
-				kannur = create_js_chart('KANNUR','highchartkannur_div','KANNUR')
-				kasaragod = create_js_chart('KASARAGOD','highchartkasaragod_div','KASARAGOD')
-				kollam = create_js_chart('KOLLAM','highchartkollam_div','KOLLAM')
-				kottayam = create_js_chart('KOTTAYAM','highchartkottayam_div','KOTTAYAM')
-				kozhikode = create_js_chart('KOZHIKODE','highchartkozhikode_div','KOZHIKODE')
-				malappuram = create_js_chart('MALAPPURAM','highchartmala_div','MALAPPURAM')
-				palakad = create_js_chart('PALAKKAD','highchartpala_div','PALAKKAD')
-				pathanamthitta = create_js_chart('PATHANAMTHITTA','highchartpathanam_div','PATHANAMTHITTA')
-				tvm = create_js_chart('THIRUVANANTHAPURAM','highcharttvn_div','THIRUVANANTHAPURAM')
-				tsr = create_js_chart('THRISSUR','highcharttsr_div','THRISSUR')
-				wayanad = create_js_chart('WAYANAD','highchartwayanad_div','WAYANAD')
-				# data = pd.read_csv(file1)
-				# Agridata.objects.all().delete()
-				# state =[i for i in data['state_name']]
-				# district_name = [i for i in data['district_name']]
-				# crop_year = [i for i in data['crop_year']]
-				# season = [i for i in data['season']]
-				# crop = [i for i in data['crop']]
-				# area = [i for i in data['area']]
-				# production = [i for i in data['production']]
-				# rainfall = [i for i in data['rainfall']]
-				# for i in range(len(state)):
-				#   agri = Agridata(state_name=state[i],district_name=district_name[i],crop_year=crop_year[i],
-				#       season=season[i],crop=crop[i],area=area[i],production=production[i],rainfall=rainfall[i])
-				#   agri.save()
-				msg = "ok"
-
-				return render(request, 'home.html', {'msg':msg,'wayanad':wayanad,'tsr':tsr,
-					'tvm':tvm,'pathanamthitta':pathanamthitta,'palakad':palakad,
-					'malappuram':malappuram,'kozhikode':kozhikode,'kottayam':kottayam,
-					'kollam':kollam,'kasaragod':kasaragod,
-					'kannur':kannur,'idukki':idukki, 'alappuzha':alappuzha,'ernakulam':ernakulam})
-			else:
-
-				file1 = None
-				return render(request, 'home.html', {})
-		else:
-
-			file1 = None
-			return render(request, 'home.html', {})
-		
-	else:
-		ernakulam = create_js_chart()
-		return render(request, 'home.html', {})
-
 def create_js_chart(name='ERNAKULAM',html_id='highchart_div',title = 'ERNAKULAM'):
 	district = Agridata.objects.filter(district_name__icontains=name)
 	years = [int(value[0]) for value in district.values_list('crop_year').distinct()]
@@ -147,7 +89,7 @@ def create_js_chart(name='ERNAKULAM',html_id='highchart_div',title = 'ERNAKULAM'
 			Avg('production'))).get('production__avg') for year in years
 	]
 	data = [
-		['Years', 'Production (Avg)'],
+		['years', 'production (Avg)'],
 	]
 	for year, avg in zip(years, averages):
 		data.append([year, avg])
@@ -218,18 +160,67 @@ def create_chart(name='ERNAKULAM',html_id='highchart_div',title='ERNAKULAM'):
 	)
 	return hc
 
-def contact(request):
-	if request.method == 'POST':
-		name=request.POST.get('Name')
-		email=request.POST.get('Email')
-		message=request.POST.get('Content')
-		print name,email,message
-		s=Contact(name=name,email=email,message=message)
-		s.save()
-		return render(request,'home.html',{})
 
+
+
+def home(request):
+	if request.method == 'POST':
+		if "file1" in request.FILES:
+			print(request.user)
+			if request.user.is_authenticated:
+				file1 = request.FILES['file1']
+				print(file1)
+				analysis = Agromain(data_file=file1)
+				print (analysis)
+				analysis.save()
+				# ernakulam = create_js_chart()
+				# alappuzha = create_js_chart('ALAPPUZHA','highchartala_div','ALAPPUZHA')
+				# idukki = create_js_chart('IDUKKI','highchartidukki_div','IDUKKI')
+				# kannur = create_js_chart('KANNUR','highchartkannur_div','KANNUR')
+				# kasaragod = create_js_chart('KASARAGOD','highchartkasaragod_div','KASARAGOD')
+				# kollam = create_js_chart('KOLLAM','highchartkollam_div','KOLLAM')
+				# kottayam = create_js_chart('KOTTAYAM','highchartkottayam_div','KOTTAYAM')
+				# kozhikode = create_js_chart('KOZHIKODE','highchartkozhikode_div','KOZHIKODE')
+				# malappuram = create_js_chart('MALAPPURAM','highchartmala_div','MALAPPURAM')
+				# palakad = create_js_chart('PALAKKAD','highchartpala_div','PALAKKAD')
+				# pathanamthitta = create_js_chart('PATHANAMTHITTA','highchartpathanam_div','PATHANAMTHITTA')
+				# tvm = create_js_chart('THIRUVANANTHAPURAM','highcharttvn_div','THIRUVANANTHAPURAM')
+				# tsr = create_js_chart('THRISSUR','highcharttsr_div','THRISSUR')
+				# wayanad = create_js_chart('WAYANAD','highchartwayanad_div','WAYANAD')
+				data = pd.read_csv(file1)
+				Agridata.objects.all().delete()
+				state =[i for i in data['state_name']]
+				district_name = [i for i in data['district_name']]
+				crop_year = [i for i in data['crop_year']]
+				season = [i for i in data['season']]
+				crop = [i for i in data['crop']]
+				area = [i for i in data['area']]
+				production = [i for i in data['production']]
+				rainfall = [i for i in data['rainfall']]
+				for i in range(len(state)):
+				  agri = Agridata(state_name=state[i],district_name=district_name[i],crop_year=crop_year[i],
+				      season=season[i],crop=crop[i],area=area[i],production=production[i],rainfall=rainfall[i])
+				  agri.save()
+				msg = "ok"
+
+				return render(request, 'home.html', {'msg':msg,'wayanad':wayanad,'tsr':tsr,
+					'tvm':tvm,'pathanamthitta':pathanamthitta,'palakad':palakad,
+					'malappuram':malappuram,'kozhikode':kozhikode,'kottayam':kottayam,
+					'kollam':kollam,'kasaragod':kasaragod,
+					'kannur':kannur,'idukki':idukki, 'alappuzha':alappuzha,'ernakulam':ernakulam})
+			else:
+
+				file1 = None
+				return render(request, 'home.html', {})
+		else:
+
+			file1 = None
+			return render(request, 'home.html', {})
+		
 	else:
-		return render(request,'contact.html',{})    
+		ernakulam = create_js_chart()
+		return render(request, 'home.html', {})
+
 
 def About(request):
 	ernakulam = create_chart()
@@ -298,59 +289,143 @@ def cluster(request):
 
 	return render(request,'cluster.html',{'vals':vals,'r':r,'g':g,'b':b,'c':c,'k':k,'y':y,'m':m})  
 
+def About(request):
+	return render(request,'about.html',{})
+def contact(request):
+	if request.method == 'POST':
+		name=request.POST.get('Name')
+		email=request.POST.get('Email')
+		message=request.POST.get('Content')
+		print name,email,message
+		s=Contact(name=name,email=email,message=message)
+		s.save()
+		return render(request,'home.html',{})
 
-
-
+	else:
+		return render(request,'contact.html',{})    
 
 def prediction(request):
-	if request.method == 'POST':
-		area=request.POST.get('area')
-		year=request.POST.get('year')
-		crop=request.POST.get('crop')
-		rainfall=request.POST.get('rainfall')
-		# production=request.POST.get('production')
-		print("inserted",area,year,crop,rainfall)
-		result=show(rainfall)
-		result=float(rainfall)
-		return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall,'crop':crop})
-	else:
-		return render(request,'predict.html',{})
+	try :
+		if request.method == 'POST':
+		# datas  = create_chart()
+			year = request.POST.get('sel1')
+			area = request.POST.get('area')
+			crop = request.POST.get('crop')
+			rainfall = request.POST.get('rainfall')
 
+			print ("inserted",year,rainfall,dist,area)
+			result = show(rainfall)
+			result = float(result)
+			return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall})
+
+		else:
+			return render(request,'predict.html',{})
+	except Exception as e:
+		print("error",e)
+		return render(request,'home.html',{})
 def show(rainfall):
-	data = Agromain.objects.filter(active=True)[0]
+	
+	data = Agromain.objects.get(active=True)
 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
 	df = pd.read_csv(filename)
-	DISTRICTS=df['district_name'].unique()
-	rain=int(rainfall)
-	print rain
-	
+	DISTRICTS = df['district_name'].unique()
+	rain = int(rainfall)
+	print(rain)
+	# fig = plt.figure(figsize=(20, 20))
+	# ax = fig.add_subplot(111)
 
-	X='rainfall'
-	Y='production'
-	
+	X = 'rainfall'
+	Y = 'production'
 
-	df2=df[[X,Y]]
-	df2.columns=np.array([X,Y])
-	x_mean=df2[X].mean()
-	y_mean=df2[Y].mean()
-	df2=df2.copy()
-	df2.fillna({X:x_mean,Y:y_mean}, inplace=True)
+	df2 = df[[X, Y]]
+	df2.columns = np.array([X, Y])
+	x_mean = df2[X].mean()
+	y_mean = df2[Y].mean()
+
+	df2 = df2.copy()
+	df2.fillna({X: x_mean, Y: y_mean}, inplace=True)
 	print("DF2",df2)
-	reg=linear_model.LinearRegression()
-	print "Rain",rain
-	df_test=[[rain]]
-	print "Test",df_test
-	model=reg.fit(df2[X].values.reshape(-1,1),df2[Y].values.reshape(-1,1))
+	# msk = np.random.rand(len(df2)) < 0.8
+
+	# df_train = df2[msk]
+	# df_test = df2[~msk]
+
+	reg = linear_model.LinearRegression()
+	
+	print "Rain ", rain
+	df_test = [[rain]]
+	print "Test ", df_test	
+	model = reg.fit(df2[X].values.reshape(-1, 1), df2[Y].values.reshape(-1, 1))
+	# print(model.summary())
 	print("reg",reg)
 	print("coef",reg.coef_)
-	predicted_values=reg.predict(df_test)
+	# to_test = df_test[X].values.reshape(-1, 1)
+	predicted_values = reg.predict(df_test)
 	print("pere",predicted_values)
 	print(df_test)
 	print("\n")
-	print("predicted_values")
-	for rainfall,predicted_production in zip(df_test,predicted_values):
-		print("RainFall :{}mm | Production : {:.2f}".format(rainfall[0],float(predicted_production[0])))
+	print("Predicted Values")
+	for rainfall, predicted_production in zip(df_test, predicted_values):
+		print("RainFall : {} mm | Production : {:.2f}".format(rainfall[0], float(predicted_production[0])))
 	return(predicted_values)
+
+# def prediction(request):
+# 	if request.method == 'POST':
+# 		area=request.POST.get('area')
+# 		year=request.POST.get('year')
+# 		crop=request.POST.get('crop')
+# 		rainfall=request.POST.get('rainfall')
+# 		# production=request.POST.get('production')
+# 		print("inserted",area,year,crop,rainfall)
+# 		result=show(rainfall)
+# 		result=float(rainfall)
+# 		return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall,'crop':crop})
+# 	else:
+# 		return render(request,'predict.html',{})
+
+# def show(rainfall):
+# 	data = Agromain.objects.filter(active=True)[0]
+# 	filename = "{}/media/{}".format(BASE_DIR,data.data_file)
+# 	df = pd.read_csv(filename)
+# 	DISTRICTS=df['district_name'].unique()
+# 	rain=int(rainfall)
+# 	print rain
+	
+
+# 	X='rainfall'
+# 	Y='production'
+	
+
+# 	df2=df[[X,Y]]
+# 	df2.columns=np.array([X,Y])
+# 	x_mean=df2[X].mean()
+# 	y_mean=df2[Y].mean()
+# 	df2=df2.copy()
+# 	df2.fillna({X:x_mean,Y:y_mean}, inplace=True)
+# 	print("DF2",df2)
+# 	reg=linear_model.LinearRegression()
+# 	print "Rain",rain
+# 	df_test=[[rain]]
+# 	print "Test",df_test
+# 	model=reg.fit(df2[X].values.reshape(-1,1),df2[Y].values.reshape(-1,1))
+# 	print("reg",reg)
+# 	print("coef",reg.coef_)
+# 	predicted_values=reg.predict(df_test)
+# 	print("pere",predicted_values)
+# 	print(df_test)
+# 	print("\n")
+# 	print("predicted_values")
+# 	for rainfall,predicted_production in zip(df_test,predicted_values):
+# 		print("RainFall :{}mm | Production : {:.2f}".format(rainfall[0],float(predicted_production[0])))
+# 	return(predicted_values)
 
 def log_out(request):
 	logout(request)
+	
+
+
+	
+	
+	
+
+	
