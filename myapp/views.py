@@ -50,6 +50,7 @@ def log_in(request):
 				return render(request,'login.html',{'error':"sorry,unable to login"})
 
 		else:
+			error = " Sorry! Phone Number and Password didn't match, Please try again ! "
 			return render(request,'login.html',{'error':"sorry,unable to login"})
 	else:
 		return render(request,'login.html',{})      
@@ -61,21 +62,33 @@ def signup(request):
 		phone=request.POST.get('phone')
 		email=request.POST.get('email')
 		password=request.POST.get('pass1')
-		user=User.objects.create_user(
+
+		request.session.modified = True
+		user_em = User.objects.filter(email=email).exists()
+		user_ph = User.objects.filter(username=str(phone)).exists()
+		if not user_em and not user_ph:
+			user=User.objects.create_user(
 			username=phone,
 			email=email,
 			password=password,
 			)
 			
-		userpro=UserProfile(
+			userpro=UserProfile(
 			username=user,
 			email=email,
 			phone=phone)
 
-		userpro.save()
-		return render(request,'login.html',{})
+			userpro.save()
+			return render(request,'login.html',{})
+		else:				
+			error = " Email or Phone-Number already exists "
+			return render(request, 'signup.html', {'error': error})
 	else:
 		return render(request,'signup.html',{})    
+          
+
+
+
 
 def home(request):
 	return render(request,'home.html',{})
@@ -313,10 +326,10 @@ def prediction(request):
 			crop = request.POST.get('crop')
 			rainfall = request.POST.get('rainfall')
 
-			print ("inserted",year,rainfall,dist,area)
+			print ("inserted",year,rainfall,crop,area)
 			result = show(rainfall)
 			result = float(result)
-			return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall})
+			return render(request,'predict.html',{'result':result,'year':year,'rainfall':rainfall,'crop':crop})
 
 		else:
 			return render(request,'predict.html',{})
@@ -421,11 +434,4 @@ def show(rainfall):
 
 def log_out(request):
 	logout(request)
-	
-
-
-	
-	
-	
-
-	
+	return HttpResponseRedirect('/')
